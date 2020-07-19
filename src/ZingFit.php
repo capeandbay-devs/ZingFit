@@ -2,6 +2,7 @@
 
 namespace CapeAndBay\ZingFit;
 
+use Illuminate\Support\Facades\Log;
 use Ixudra\Curl\Facades\Curl;
 
 class ZingFit
@@ -22,16 +23,23 @@ class ZingFit
 
     public function init()
     {
-        $access_token = $this->getStoredOwnerAccessToken();
+        try {
+            $access_token = $this->getStoredOwnerAccessToken();
 
-        if($access_token)
-        {
-            $this->access_token = $access_token['access_token'];
+            if($access_token)
+            {
+                $this->access_token = $access_token['access_token'];
+            }
+            else
+            {
+                $this->getOwnerAccessToken();
+            }
         }
-        else
+        catch(\Exception $e)
         {
-            $this->getOwnerAccessToken();
+            Log::info($e->getMessage());
         }
+
     }
 
     public function getStoredOwnerAccessToken()
