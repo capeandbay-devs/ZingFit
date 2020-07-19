@@ -1,6 +1,6 @@
 {
     "name": "capeandbay/zingfit",
-    "description": ":package_description",
+    "description": "A Laravel Package for ZingFit-enabled Projects.",
     "license": "MIT",
     "authors": [
         {
@@ -13,14 +13,14 @@
     "keywords": ["Laravel", "ZingFit"],
     "require": {
         "illuminate/support": "~6|~7",
-        "ixudra/curl": "^6.19"
+        "ixudra/curl": "^6.19",
+        "goldspecdigital/laravel-eloquent-uuid": "^6.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^8.0",
         "mockery/mockery": "^1.1",
         "orchestra/testbench": "~3|~4",
-        "sempro/phpunit-pretty-print": "^1.0",
-        "goldspecdigital/laravel-eloquent-uuid": "^6.0"
+        "sempro/phpunit-pretty-print": "^1.0"
     },
     "autoload": {
         "psr-4": {

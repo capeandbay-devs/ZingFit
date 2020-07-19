@@ -1,9 +1,9 @@
 # ZingFit
 
-[![Latest Version on Packagist][ico-version]][link-packagist]
-[![Total Downloads][ico-downloads]][link-downloads]
-[![Build Status][ico-travis]][link-travis]
-[![StyleCI][ico-styleci]][link-styleci]
+
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/capeandbay/zingfit?style=plastic)](https://packagist.org/packages/capeandbay/zingfit)
+[![Total Downloads](https://img.shields.io/packagist/dt/capeandbay/zingfit?color=green&style=plastic)](https://packagist.org/packages/capeandbay/zingfit)
+
 
 This is where your description should go. Take a look at [contributing.md](contributing.md) to see a to do list.
 
