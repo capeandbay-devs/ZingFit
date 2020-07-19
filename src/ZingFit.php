@@ -14,6 +14,38 @@ class ZingFit
         {
             $this->access_token = $access_token;
         }
+        else
+        {
+            $this->init();
+        }
+    }
+
+    public function init()
+    {
+        $access_token = $this->getStoredOwnerAccessToken();
+
+        if($access_token)
+        {
+            $this->access_token = $access_token['access_token'];
+        }
+        else
+        {
+            $this->getOwnerAccessToken();
+        }
+    }
+
+    public function getStoredOwnerAccessToken()
+    {
+        $results = false;
+
+        $model = new ZingFitToken();
+
+        if($record = $model->getMostRecentToken())
+        {
+            $results = $record->toArray();
+        }
+
+        return $results;
     }
 
     public function getOwnerAccessToken()
@@ -53,6 +85,55 @@ class ZingFit
         if((env('APP_ENV', 'local') == 'production') || (env('APP_ENV', 'local') == 'prod'))
         {
             $results = config('zingfit.production_url');
+        }
+
+        return $results;
+    }
+
+    public function getAllRegions()
+    {
+        $results = [];
+
+        $url = $this->getRootUrl().'/regions';
+
+        $headers = [
+            'Authorization' => 'Bearer '.$this->access_token
+        ];
+
+        $response = Curl::to($url)
+            ->withHeaders($headers)
+            ->withContentType('application/json')
+            ->asJson(true)
+            ->get();
+
+        if($response)
+        {
+            $results = $response;
+        }
+
+        return $results;
+    }
+
+    public function getAllSites($region_id)
+    {
+        $results = [];
+
+        $url = $this->getRootUrl().'/sites';
+
+        $headers = [
+            'Authorization' => 'Bearer '.$this->access_token,
+            'X-ZINGFIT-REGION-ID' => $region_id
+        ];
+
+        $response = Curl::to($url)
+            ->withHeaders($headers)
+            ->withContentType('application/json')
+            ->asJson(true)
+            ->get();
+
+        if($response)
+        {
+            $results = $response;
         }
 
         return $results;
