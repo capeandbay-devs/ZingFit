@@ -146,4 +146,29 @@ class ZingFit
 
         return $results;
     }
+
+    public function getAllSeriesForSite($region_id, $site_id)
+    {
+        $results = [];
+
+        $url = $this->getRootUrl().'/series?siteId='.$site_id;
+
+        $headers = [
+            'Authorization' => 'Bearer '.$this->access_token,
+            'X-ZINGFIT-REGION-ID' => $region_id
+        ];
+
+        $response = Curl::to($url)
+            ->withHeaders($headers)
+            ->withContentType('application/json')
+            ->asJson(true)
+            ->get();
+
+        if($response)
+        {
+            $results = $response;
+        }
+
+        return $results;
+    }
 }
