@@ -7,7 +7,7 @@ use Ixudra\Curl\Facades\Curl;
 
 class ZingFit
 {
-    protected $access_token;
+    protected $access_token, $mode;
 
     public function __construct(string $access_token = null)
     {
@@ -80,7 +80,7 @@ class ZingFit
         if($response)
         {
             $results = $response;
-
+            $this->mode = 'customer';
             $this->setAccessToken($response);
         }
 
@@ -106,6 +106,7 @@ class ZingFit
         if($response)
         {
             $results = $response;
+            $this->mode = 'owner';
             $this->setAccessToken($response);
         }
 
@@ -229,10 +230,62 @@ class ZingFit
         return $results;
     }
 
-    public function saveCustomerAccessToken()
+    public function getCustomer($region_id)
     {
         $results = false;
 
+        $url = $this->getRootUrl().'/account';
+
+        $headers = [
+            'Authorization' => 'Bearer '.$this->access_token,
+            'X-ZINGFIT-REGION-ID' => $region_id
+        ];
+
+        $response = Curl::to($url)
+            ->withHeaders($headers)
+            ->withContentType('application/json')
+            ->asJson(true)
+            ->get();
+
+        if($response)
+        {
+            $results = $response;
+        }
+
         return $results;
+    }
+
+    public function saveCustomerAccessToken($payload)
+    {
+        $results = false;
+
+        if($this->getAccessMode() == 'customer')
+        {
+            $token = new ZingFitToken();
+            if($token = $token->insertNew($payload))
+            {
+                $results = $token;
+
+                // de-activate and softly delete any previous existing records
+                $previous_tokens = $token->whereCustomerId($token->customer_id)->get();
+
+                foreach ($previous_tokens as $t)
+                {
+                    if($t->id != $token->id)
+                    {
+                        $t->active = 0;
+                        $t->save();
+                        $t->delete();
+                    }
+                }
+            }
+        }
+
+        return $results;
+    }
+
+    public function getAccessMode()
+    {
+        return $this->mode;
     }
 }
