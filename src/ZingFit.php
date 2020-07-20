@@ -171,4 +171,30 @@ class ZingFit
 
         return $results;
     }
+
+    public function createNewCustomer($region_id, $payload)
+    {
+        $results = false;
+
+        $url = $this->getRootUrl().'/account';
+
+        $headers = [
+            'Authorization' => 'Bearer '.$this->access_token,
+            'X-ZINGFIT-REGION-ID' => $region_id
+        ];
+
+        $response = Curl::to($url)
+            ->withHeaders($headers)
+            ->withContentType('application/json')
+            ->withData($payload)
+            ->asJson(true)
+            ->post();
+
+        if($response)
+        {
+            $results = $response;
+        }
+
+        return $results;
+    }
 }
