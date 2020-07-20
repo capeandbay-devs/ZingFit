@@ -12,14 +12,20 @@ class ZingFitToken extends Model
 
     protected $table = 'zing_fit_tokens';
 
-    public function getMostRecentToken($type = 'owner')
+    public function getMostRecentToken($type = 'owner', $customer_id = null)
     {
         $results = false;
 
         $record = $this->whereOauthType($type)
             ->whereActive(1)
-            ->whereDate('expires_at', '>=', date('Y-m-d h:i:s'))
-            ->first();
+            ->whereDate('expires_at', '>=', date('Y-m-d h:i:s'));
+
+        if((!is_null($customer_id)) && ($type == 'customer'))
+        {
+            $record = $record->whereCustomerId($customer_id);
+        }
+
+        $record = $record->first();
 
         if(!is_null($record))
         {

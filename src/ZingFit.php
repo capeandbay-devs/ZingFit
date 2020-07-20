@@ -56,6 +56,22 @@ class ZingFit
         return $results;
     }
 
+    public function getStoredCustomerAccessToken($customer_id)
+    {
+        $results = false;
+
+        $model = new ZingFitToken();
+
+        if($record = $model->getMostRecentToken('customer', $customer_id))
+        {
+            $results = $record->toArray();
+            $this->setAccessToken($results);
+            $this->mode = 'customer';
+        }
+
+        return $results;
+    }
+
     public function getCustomerAccessToken($customer_user_name, $customer_password)
     {
         $results = false;
@@ -287,5 +303,62 @@ class ZingFit
     public function getAccessMode()
     {
         return $this->mode;
+    }
+
+    public function createNewOrder($payload, $region_id)
+    {
+        $results = false;
+
+        if($this->getAccessMode() == 'customer')
+        {
+            $url = $this->getRootUrl().'/orders/series';
+
+            $headers = [
+                'Authorization' => 'Bearer '.$this->access_token,
+                'X-ZINGFIT-REGION-ID' => $region_id
+            ];
+
+            $response = Curl::to($url)
+                ->withHeaders($headers)
+                ->withContentType('application/json')
+                ->withData($payload)
+                ->asJson(true)
+                ->post();
+
+            if($response)
+            {
+                $results = $response;
+            }
+        }
+
+        return $results;
+    }
+
+    public function paymentInfoForOrder($order_id, $region_id)
+    {
+        $results = false;
+
+        if($this->getAccessMode() == 'customer')
+        {
+            $url = $this->getRootUrl()."/payments/{$order_id}/paymentinfo";
+
+            $headers = [
+                'Authorization' => 'Bearer '.$this->access_token,
+                'X-ZINGFIT-REGION-ID' => $region_id
+            ];
+
+            $response = Curl::to($url)
+                ->withHeaders($headers)
+                ->withContentType('application/json')
+                ->asJson(true)
+                ->get();
+
+            if($response)
+            {
+                $results = $response;
+            }
+        }
+
+        return $results;
     }
 }
