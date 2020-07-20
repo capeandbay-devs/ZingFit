@@ -56,6 +56,37 @@ class ZingFit
         return $results;
     }
 
+    public function getCustomerAccessToken($customer_user_name, $customer_password)
+    {
+        $results = false;
+
+        $url = $this->getRootUrl().'/oauth/token';
+        $headers = [
+            'Authorization' => 'Basic '.base64_encode(config('zingfit.client_id').':'.config('zingfit.client_secret'))
+        ];
+
+        $payload = [
+            'grant_type'=> 'password',
+            'username' => $customer_user_name,
+            'password' => $customer_password
+        ];
+
+        $response = Curl::to($url.'?'.http_build_query($payload))
+            ->withHeaders($headers)
+            ->withContentType('application/json')
+            ->asJson(true)
+            ->post();
+
+        if($response)
+        {
+            $results = $response;
+
+            $this->setAccessToken($response);
+        }
+
+        return $results;
+    }
+
     public function getOwnerAccessToken()
     {
         $results = false;
@@ -194,6 +225,13 @@ class ZingFit
         {
             $results = $response;
         }
+
+        return $results;
+    }
+
+    public function saveCustomerAccessToken()
+    {
+        $results = false;
 
         return $results;
     }
